@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Simulation</title>
+    <style>
+        .card {
+            width: 100px;
+            height: 140px;
+            margin: 5px;
+        }
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .stats {
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Blackjack Simulation</h1>
+    <div id="game-state">
+        <div id="player-hand">
+            <h2>Player (Agent) Hand:</h2>
+        </div>
+        <p>Player (Agent) Score: <span id="player-score"></span></p>
+        <div id="dealer-hand">
+            <h2>Dealer Hand:</h2>
+        </div>
+        <p>Dealer Score: <span id="dealer-score"></span></p>
+        <p id="message"></p>
+        <p id="game-over"></p>
+
+        <div class="stats">
+            <p>Deck Size: <span id="deck-size"></span></p>
+            <p>High Cards (10, J, Q, K): <span id="high-cards"></span></p>
+            <p>Low Cards (2, 3, 4, 5): <span id="low-cards"></span></p>
+            <p>Aces: <span id="aces"></span></p>
+        </div>
+    </div>
+    <button id="start-simulation">New Simulation</button>
+    <button id="continue-simulation" style="display: none;">Continue Simulation</button>
+
+    <script>
+        function updateGameState(state) {
+            $('#player-hand').empty();
+            $('#dealer-hand').empty();
+
+            $('#player-hand').append('<h2>Player (Agent) Hand:</h2>');
+            state.player_hand.forEach(function(card) {
+                const cardImage = `/static/playing_card_images/${card}.svg`;
+                $('#player-hand').append(`<img src="${cardImage}" class="card" alt="${card}">`);
+            });
+
+            $('#dealer-hand').append('<h2>Dealer Hand:</h2>');
+            state.dealer_hand.forEach(function(card, index) {
+                let cardImage;
+                if (!state.game_over && index === 1) {
+                    cardImage = '/static/playing_card_images/card_back.png';
+                } else {
+                    cardImage = `/static/playing_card_images/${card}.svg`;
+                }
+                $('#dealer-hand').append(`<img src="${cardImage}" class="card" alt="${card}">`);
+            });
+
+            $('#player-score').text(state.player_score);
+
+            if (state.game_over) {
+                $('#dealer-score').text(state.dealer_score);
+            } else {
+                $('#dealer-score').text('?');
+            }
+
+            $('#message').text(state.message || '');
+
+            if (state.game_over) {
+                $('#start-simulation').prop('disabled', false);
+                $('#continue-simulation').show();
+                $('#game-over').text('Game Over!');
+                $('.stats').show();
+                $('#deck-size').text(state.deck_size);
+                $('#high-cards').text(state.high_cards);
+                $('#low-cards').text(state.low_cards);
+                $('#aces').text(state.aces);
+            } else {
+                $('#game-over').text('');
+                $('.stats').hide();
+            }
+        }
+
+        $('#start-simulation').click(function() {
+            $('#start-simulation').prop('disabled', true);
+            $('#continue-simulation').hide();
+
+            $.post('/simulate', function(data) {
+                let interval = setInterval(() => {
+                    if (data.steps && data.steps.length > 0) {
+                        const step = data.steps.shift();
+                        updateGameState(step);
+                        if (step.game_over) {
+                            clearInterval(interval);
+                        }
+                    }
+                }, 1000);
+            });
+        });
+
+        $('#continue-simulation').click(function() {
+          $.post('/simulate', function(data) {
+                let interval = setInterval(() => {
+                    if (data.steps && data.steps.length > 0) {
+                        const step = data.steps.shift();
+                        updateGameState(step);
+                        if (step.game_over) {
+                            clearInterval(interval);
+                        }
+                    }
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
