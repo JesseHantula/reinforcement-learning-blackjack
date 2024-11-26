@@ -49,6 +49,24 @@ class BlackjackGame:
             self.game_over = True
             return 'Player busts! You lose.'
         return ''
+    
+    def dealer_turn(self):
+        dealer_score = self.calculate_score(self.dealer_hand)
+        while dealer_score < 17:
+            self.deal_card(self.dealer_hand)
+            dealer_score = self.calculate_score(self.dealer_hand)
+        player_score = self.calculate_score(self.player_hand)
+        if dealer_score > 21:
+            self.game_over = True
+            return 'Dealer busts! You win.'
+        if dealer_score > player_score:
+            self.game_over = True
+            return 'Dealer wins.'
+        if dealer_score < player_score:
+            self.game_over = True
+            return 'You win.'
+        self.game_over = True
+        return 'It\'s a tie.'
 
     def get_game_state(self):
         return {
