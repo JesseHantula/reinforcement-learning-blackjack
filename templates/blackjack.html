@@ -4,14 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackjack Game</title>
+    <style>
+        .card {
+            width: 100px;
+            height: 140px;
+            margin: 5px;
+        }
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <h1>Blackjack Game</h1>
     <div id="game-state">
-        <p>Player Hand: <span id="player-hand"></span></p>
+        <div id="player-hand">
+            <h2>Player Hand:</h2>
+        </div>
         <p>Player Score: <span id="player-score"></span></p>
-        <p>Dealer Hand: <span id="dealer-hand"></span></p>
+        <div id="dealer-hand">
+            <h2>Dealer Hand:</h2>
+        </div>
         <p>Dealer Score: <span id="dealer-score"></span></p>
         <p id="message"></p>
         <p id="game-over"></p>
@@ -23,9 +38,22 @@
 
     <script>
         function updateGameState(state) {
-            $('#player-hand').text(JSON.stringify(state.player_hand));
+            $('#player-hand').empty();
+            $('#dealer-hand').empty();
+
+            $('#player-hand').append('<h2>Player Hand:</h2>');
+            state.player_hand.forEach(function(card) {
+                const cardImage = `/static/playing_card_images/${card}.svg`;
+                $('#player-hand').append(`<img src="${cardImage}" class="card" alt="${card}">`);
+            });
+
+            $('#dealer-hand').append('<h2>Dealer Hand:</h2>');
+            state.dealer_hand.forEach(function(card) {
+                const cardImage = `/static/playing_card_images/${card}.svg`;
+                $('#dealer-hand').append(`<img src="${cardImage}" class="card" alt="${card}">`);
+            });
+
             $('#player-score').text(state.player_score);
-            $('#dealer-hand').text(JSON.stringify(state.dealer_hand));
             $('#dealer-score').text(state.dealer_score);
             $('#message').text(state.message || '');
 
@@ -33,10 +61,12 @@
                 $('#hit').prop('disabled', true);
                 $('#stand').prop('disabled', true);
                 $('#restart-game').show();
+                $('#game-over').text('Game Over!');
             } else {
                 $('#hit').prop('disabled', false);
                 $('#stand').prop('disabled', false);
                 $('#restart-game').hide();
+                $('#game-over').text('');
             }
         }
 
