@@ -1,1 +1,1 @@
-# reinforcement-learning-blackjack
+# Reinforcement Learning Blackjack Bot
