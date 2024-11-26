@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Game</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Blackjack Game</h1>
+    <div id="game-state">
+        <p>Player Hand: <span id="player-hand"></span></p>
+        <p>Player Score: <span id="player-score"></span></p>
+        <p>Dealer Hand: <span id="dealer-hand"></span></p>
+        <p>Dealer Score: <span id="dealer-score"></span></p>
+        <p id="message"></p>
+        <p id="game-over"></p>
+    </div>
+    <button id="start-game">Start Game</button>
+    <button id="hit">Hit</button>
+    <button id="stand">Stand</button>
+    <button id="restart-game" style="display: none;">Restart</button>
+
+    <script>
+        function updateGameState(state) {
+            $('#player-hand').text(JSON.stringify(state.player_hand));
+            $('#player-score').text(state.player_score);
+            $('#dealer-hand').text(JSON.stringify(state.dealer_hand));
+            $('#dealer-score').text(state.dealer_score);
+            $('#message').text(state.message || '');
+
+            if (state.game_over) {
+                $('#hit').prop('disabled', true);
+                $('#stand').prop('disabled', true);
+                $('#restart-game').show();
+            } else {
+                $('#hit').prop('disabled', false);
+                $('#stand').prop('disabled', false);
+                $('#restart-game').hide();
+            }
+        }
+
+        $('#start-game').click(function() {
+            $.post('/start', function(data) {
+                updateGameState(data);
+            });
+        });
+
+        $('#hit').click(function() {
+            $.post('/hit', function(data) {
+                updateGameState(data);
+            });
+        });
+
+        $('#stand').click(function() {
+            $.post('/stand', function(data) {
+                updateGameState(data);
+            });
+        });
+
+        $('#restart-game').click(function() {
+            $.post('/start', function(data) {
+                updateGameState(data);
+            });
+        });
+    </script>
+</body>
+</html>
