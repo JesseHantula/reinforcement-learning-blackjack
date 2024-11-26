@@ -19,6 +19,11 @@ class BlackjackGame:
         self.aces = 0
         self.game_over = False
 
+    def reset(self):
+        self.player_hand = []
+        self.dealer_hand = []
+        self.game_over = False
+
     def create_deck(self):
         # We want to make a deck consisting of 6 sets of 52 cards
         # This is the standard amount used in casinos and online games

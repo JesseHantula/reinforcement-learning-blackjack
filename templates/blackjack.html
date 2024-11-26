@@ -14,6 +14,10 @@
             display: flex;
             flex-wrap: wrap;
         }
+        .stats {
+            margin-top: 20px;
+            display: none;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -41,7 +45,7 @@
     <button id="start-game">Start Game</button>
     <button id="hit">Hit</button>
     <button id="stand">Stand</button>
-    <button id="restart-game" style="display: none;">Restart</button>
+    <button id="new-hand" style="display: none;">New Hand</button>
 
     <script>
         function updateGameState(state) {
@@ -55,31 +59,43 @@
             });
 
             $('#dealer-hand').append('<h2>Dealer Hand:</h2>');
-            state.dealer_hand.forEach(function(card) {
-                const cardImage = `/static/playing_card_images/${card}.svg`;
+            state.dealer_hand.forEach(function(card, index) {
+                let cardImage;
+                if (!state.game_over && index === 1) {
+                    cardImage = '/static/playing_card_images/card_back.png';
+                } else {
+                    cardImage = `/static/playing_card_images/${card}.svg`;
+                }
                 $('#dealer-hand').append(`<img src="${cardImage}" class="card" alt="${card}">`);
             });
 
             $('#player-score').text(state.player_score);
-            $('#dealer-score').text(state.dealer_score);
+
+            if (state.game_over) {
+                $('#dealer-score').text(state.dealer_score);
+            } else {
+                $('#dealer-score').text('?');
+            }
+
             $('#message').text(state.message || '');
 
             if (state.game_over) {
                 $('#hit').prop('disabled', true);
                 $('#stand').prop('disabled', true);
-                $('#restart-game').show();
+                $('#new-hand').show();
                 $('#game-over').text('Game Over!');
+                $('.stats').show();
+                $('#deck-size').text(state.deck_size);
+                $('#high-cards').text(state.high_cards);
+                $('#low-cards').text(state.low_cards);
+                $('#aces').text(state.aces);
             } else {
                 $('#hit').prop('disabled', false);
                 $('#stand').prop('disabled', false);
-                $('#restart-game').hide();
+                $('#new-hand').hide();
                 $('#game-over').text('');
+                $('.stats').hide();
             }
-
-            $('#deck-size').text(state.deck_size);
-            $('#high-cards').text(state.high_cards);
-            $('#low-cards').text(state.low_cards);
-            $('#aces').text(state.aces);
         }
 
         $('#start-game').click(function() {
@@ -100,8 +116,8 @@
             });
         });
 
-        $('#restart-game').click(function() {
-            $.post('/start', function(data) {
+        $('#new-hand').click(function() {
+            $.post('/new_hand', function(data) {
                 updateGameState(data);
             });
         });

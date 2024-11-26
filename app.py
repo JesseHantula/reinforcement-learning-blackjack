@@ -16,6 +16,13 @@ def start_game():
     game.deal_dealer()
     return jsonify(game.get_game_state())
 
+@app.route('/new_hand', methods=['POST'])
+def new_hand():
+    game.reset()
+    game.deal_player()
+    game.deal_dealer()
+    return jsonify(game.get_game_state())
+
 @app.route('/hit', methods=['POST'])
 def hit():
     message = game.player_hit()
