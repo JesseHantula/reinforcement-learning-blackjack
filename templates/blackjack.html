@@ -30,6 +30,13 @@
         <p>Dealer Score: <span id="dealer-score"></span></p>
         <p id="message"></p>
         <p id="game-over"></p>
+
+        <div class="stats">
+            <p>Deck Size: <span id="deck-size"></span></p>
+            <p>High Cards (10, J, Q, K): <span id="high-cards"></span></p>
+            <p>Low Cards (2, 3, 4, 5): <span id="low-cards"></span></p>
+            <p>Aces: <span id="aces"></span></p>
+        </div>
     </div>
     <button id="start-game">Start Game</button>
     <button id="hit">Hit</button>
@@ -68,6 +75,11 @@
                 $('#restart-game').hide();
                 $('#game-over').text('');
             }
+
+            $('#deck-size').text(state.deck_size);
+            $('#high-cards').text(state.high_cards);
+            $('#low-cards').text(state.low_cards);
+            $('#aces').text(state.aces);
         }
 
         $('#start-game').click(function() {

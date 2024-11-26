@@ -14,6 +14,9 @@ class BlackjackGame:
         self.deck = self.create_deck()
         self.player_hand = []
         self.dealer_hand = []
+        self.high_cards = 0
+        self.low_cards = 0
+        self.aces = 0
         self.game_over = False
 
     def create_deck(self):
@@ -30,8 +33,18 @@ class BlackjackGame:
         # This will be done to somewhat mimic the behavior of a casino
         if len(self.deck) < 52:
             self.deck = self.create_deck()
+            self.high_cards = 0
+            self.low_cards = 0
+            self.aces = 0
         if self.deck:
-            hand.append(self.deck.pop())
+            card = self.deck.pop()
+            hand.append(card)
+            if card.rank in ['10', 'Jack', 'Queen', 'King']:
+                self.high_cards += 1
+            elif card.rank == 'Ace':
+                self.aces += 1
+            elif card.rank in ['2', '3', '4', '5']:
+                self.low_cards += 1
 
     def calculate_score(self, hand):
         values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'Jack': 10, 'Queen': 10, 'King': 10, 'Ace': 11}
@@ -83,5 +96,9 @@ class BlackjackGame:
             'dealer_hand': [card.name for card in self.dealer_hand],
             'player_score': self.calculate_score(self.player_hand),
             'dealer_score': self.calculate_score(self.dealer_hand),
+            'deck_size': len(self.deck),
+            'high_cards': self.high_cards,
+            'low_cards': self.low_cards,
+            'aces': self.aces,
             'game_over': self.game_over
         }
