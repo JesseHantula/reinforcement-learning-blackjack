@@ -48,14 +48,13 @@ def stand():
 def simulate():
     global simulation
 
+    if request.json.get('new_game', False):
+        simulation = BlackjackGame()
+
     num_simulations = request.json.get('num_simulations', 1)
     all_steps = []
-    total_simulation_count = agent.simulation_count
 
     for _ in range(num_simulations):
-        if not simulation:
-            simulation = BlackjackGame()
-
         simulation.reset()
         simulation.deal_player()
         simulation.deal_dealer()

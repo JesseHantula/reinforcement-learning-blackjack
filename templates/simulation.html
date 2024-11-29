@@ -116,7 +116,7 @@
           url: "/simulate",
           type: "POST",
           contentType: "application/json",
-          data: JSON.stringify({}),
+          data: JSON.stringify({ new_game: true }),
           success: function (data) {
             let interval = setInterval(() => {
               if (data.steps && data.steps.length > 0) {
