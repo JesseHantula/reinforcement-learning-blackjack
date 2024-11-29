@@ -11,6 +11,7 @@ class RLAgent:
         self.learning_rate = 0.1
         self.discount_factor = 0.9
         self.exploration_rate = 0.2
+        self.simulation_count = 0
 
     def get_state_key(self, player_score, dealer_visible_card_rank):
         return f"{player_score}-{dealer_visible_card_rank}"

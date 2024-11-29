@@ -48,49 +48,63 @@ def stand():
 def simulate():
     global simulation
 
-    if not simulation:
-        simulation = BlackjackGame()
+    num_simulations = request.json.get('num_simulations', 1)
+    all_steps = []
+    total_simulation_count = agent.simulation_count
 
-    simulation.reset()
-    simulation.deal_player()
-    simulation.deal_dealer()
+    for _ in range(num_simulations):
+        if not simulation:
+            simulation = BlackjackGame()
 
-    state = agent.get_state_key(simulation.calculate_score(simulation.player_hand), simulation.dealer_hand[0].rank)
-    steps = []
+        simulation.reset()
+        simulation.deal_player()
+        simulation.deal_dealer()
 
-    while not simulation.game_over:
-        action = agent.choose_action(state)
-        
-        if action == 'hit':
-            message = simulation.player_hit()
-        else:
-            message = simulation.dealer_turn()
+        state = agent.get_state_key(
+            simulation.calculate_score(simulation.player_hand),
+            simulation.dealer_hand[0].rank
+        )
+        steps = []
 
-        steps.append({
-            'player_hand': [card.name for card in simulation.player_hand],
-            'dealer_hand': [card.name for card in simulation.dealer_hand],
-            'player_score': simulation.calculate_score(simulation.player_hand),
-            'dealer_score': simulation.calculate_score(simulation.dealer_hand) if simulation.game_over else None,
-            'deck_size': len(simulation.deck),
-            'high_cards': simulation.high_cards,
-            'low_cards': simulation.low_cards,
-            'aces': simulation.aces,
-            'game_over': simulation.game_over,
-            'message': message
-        })
+        while not simulation.game_over:
+            action = agent.choose_action(state)
 
-        if not simulation.game_over:
-            next_state = agent.get_state_key(
-                simulation.calculate_score(simulation.player_hand), 
-                simulation.dealer_hand[0].rank
-            )
-            reward = agent.get_reward(simulation)
-            agent.update_q_value(state, action, reward, next_state)
-            state = next_state
+            if action == 'hit':
+                message = simulation.player_hit()
+            else:
+                message = simulation.dealer_turn()
+
+            steps.append({
+                'player_hand': [card.name for card in simulation.player_hand],
+                'dealer_hand': [card.name for card in simulation.dealer_hand],
+                'player_score': simulation.calculate_score(simulation.player_hand),
+                'dealer_score': simulation.calculate_score(simulation.dealer_hand) if simulation.game_over else None,
+                'deck_size': len(simulation.deck),
+                'high_cards': simulation.high_cards,
+                'low_cards': simulation.low_cards,
+                'aces': simulation.aces,
+                'game_over': simulation.game_over,
+                'message': message
+            })
+
+            if not simulation.game_over:
+                next_state = agent.get_state_key(
+                    simulation.calculate_score(simulation.player_hand),
+                    simulation.dealer_hand[0].rank
+                )
+                reward = agent.get_reward(simulation)
+                agent.update_q_value(state, action, reward, next_state)
+                state = next_state
+
+        all_steps.extend(steps)
+
+    agent.simulation_count += num_simulations
 
     return jsonify({
-        'steps': steps
+        'steps': all_steps,
+        'simulation_count': agent.simulation_count,
     })
+
 
 if __name__ == '__main__':
     app.run(debug=True)
