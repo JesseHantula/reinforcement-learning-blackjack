@@ -41,6 +41,9 @@
         <p>Low Cards (2, 3, 4, 5): <span id="low-cards"></span></p>
         <p>Aces: <span id="aces"></span></p>
         <p>Simulation Count: <span id="simulation-count"></span></p>
+        <p>Bot Wins: <span id="bot-wins"></span></p>
+        <p>Dealer Wins: <span id="dealer-wins"></span></p>
+        <p>Draws: <span id="draws"></span></p>
       </div>
     </div>
     <button id="start-simulation">New Simulation</button>
@@ -100,6 +103,9 @@
           $("#low-cards").text(state.low_cards);
           $("#aces").text(state.aces);
           $("#simulation-count").text(state.simulation_count);
+          $("#bot-wins").text(state.bot_wins);
+          $("#dealer-wins").text(state.dealer_wins);
+          $("#draws").text(state.draws);
         } else {
           $("#game-over").text("");
           $(".stats").hide();

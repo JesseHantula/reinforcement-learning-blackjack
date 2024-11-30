@@ -52,6 +52,9 @@ def simulate():
                 'low_cards': simulation.low_cards,
                 'aces': simulation.aces,
                 'game_over': simulation.game_over,
+                'bot_wins': simulation.bot_wins,
+                'dealer_wins': simulation.dealer_wins,
+                'draws': simulation.draws,
                 'message': message
             })
 

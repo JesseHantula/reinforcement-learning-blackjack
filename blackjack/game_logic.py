@@ -17,6 +17,9 @@ class BlackjackGame:
         self.high_cards = 0
         self.low_cards = 0
         self.aces = 0
+        self.bot_wins = 0
+        self.dealer_wins = 0
+        self.draws = 0
         self.game_over = False
 
     def reset(self):
@@ -74,6 +77,7 @@ class BlackjackGame:
         player_score = self.calculate_score(self.player_hand)
         if player_score > 21:
             self.game_over = True
+            self.dealer_wins += 1
             return 'Player busts! You lose.'
         return ''
     
@@ -85,14 +89,18 @@ class BlackjackGame:
         player_score = self.calculate_score(self.player_hand)
         if dealer_score > 21:
             self.game_over = True
+            self.bot_wins += 1
             return 'Dealer busts! You win.'
         if dealer_score > player_score:
             self.game_over = True
+            self.dealer_wins += 1
             return 'Dealer wins.'
         if dealer_score < player_score:
             self.game_over = True
+            self.bot_wins += 1
             return 'You win.'
         self.game_over = True
+        self.draws += 1
         return 'It\'s a tie.'
 
     def get_game_state(self):
