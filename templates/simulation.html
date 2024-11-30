@@ -68,12 +68,12 @@
 
       <div class="right-column">
         <div class="stats">
-          <h2>Statistics</h2>
+          <h2>Current Deck Information</h2>
           <p>Deck Size: <span id="deck-size"></span></p>
-          <p>High Cards (10, J, Q, K): <span id="high-cards"></span></p>
-          <p>Low Cards (2, 3, 4, 5): <span id="low-cards"></span></p>
-          <p>Aces: <span id="aces"></span></p>
-          <p>Simulation Count: <span id="simulation-count"></span></p>
+          <p>High Cards Played (10, J, Q, K): <span id="high-cards"></span></p>
+          <p>Low Cards Played (2, 3, 4, 5): <span id="low-cards"></span></p>
+          <p>Aces Played: <span id="aces"></span></p>
+          <h2>Statistics</h2>
           <p>Bot Wins: <span id="bot-wins"></span></p>
           <p>Dealer Wins: <span id="dealer-wins"></span></p>
           <p>Draws: <span id="draws"></span></p>
@@ -125,7 +125,6 @@
           $("#high-cards").text(state.high_cards);
           $("#low-cards").text(state.low_cards);
           $("#aces").text(state.aces);
-          $("#simulation-count").text(state.simulation_count);
           $("#bot-wins").text(state.bot_wins);
           $("#dealer-wins").text(state.dealer_wins);
           $("#draws").text(state.draws);
@@ -155,8 +154,6 @@
                 }
               }
             }, 1000);
-
-            $("#simulation-count").text(data.simulation_count);
           },
           error: function (xhr, status, error) {
             console.error("Error:", status, error);
@@ -180,8 +177,6 @@
                 }
               }
             }, 1000);
-
-            $("#simulation-count").text(data.simulation_count);
           },
           error: function (xhr, status, error) {
             console.error("Error:", status, error);
@@ -201,8 +196,6 @@
                 updateGameState(step);
               }, index * 500);
             });
-
-            $("#simulation-count").text(data.simulation_count);
           },
         });
       });
@@ -219,8 +212,6 @@
                 updateGameState(step);
               }, index * 100);
             });
-
-            $("#simulation-count").text(data.simulation_count);
           },
         });
       });

@@ -8,7 +8,7 @@ simulation = None
 agent = RLAgent()
 
 @app.route('/')
-def test_bot():
+def home():
     global simulation
     simulation = BlackjackGame()
     return render_template('simulation.html')
@@ -19,6 +19,7 @@ def simulate():
 
     if request.json.get('new_game', False):
         simulation = BlackjackGame()
+        agent.reset()
 
     num_simulations = request.json.get('num_simulations', 1)
     all_steps = []
@@ -28,11 +29,26 @@ def simulate():
         simulation.deal_player()
         simulation.deal_dealer()
 
+        steps = [{
+            'player_hand': [card.name for card in simulation.player_hand],
+            'dealer_hand': [card.name for card in simulation.dealer_hand],
+            'player_score': simulation.calculate_score(simulation.player_hand),
+            'dealer_score': None,
+            'deck_size': len(simulation.deck),
+            'high_cards': simulation.high_cards,
+            'low_cards': simulation.low_cards,
+            'aces': simulation.aces,
+            'game_over': simulation.game_over,
+            'bot_wins': simulation.bot_wins,
+            'dealer_wins': simulation.dealer_wins,
+            'draws': simulation.draws,
+            'message': "Initial deal"
+        }]
+
         state = agent.get_state_key(
             simulation.calculate_score(simulation.player_hand),
             simulation.dealer_hand[0].rank
         )
-        steps = []
 
         while not simulation.game_over:
             action = agent.choose_action(state)
@@ -69,11 +85,8 @@ def simulate():
 
         all_steps.extend(steps)
 
-    agent.simulation_count += num_simulations
-
     return jsonify({
-        'steps': all_steps,
-        'simulation_count': agent.simulation_count,
+        'steps': all_steps
     })
 
 
