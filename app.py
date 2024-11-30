@@ -1,11 +1,11 @@
 from flask import Flask, render_template, jsonify, request
 from blackjack.game_logic import BlackjackGame
-from blackjack.rl_bot import RLAgent
+from blackjack.dqn_agent import DQNAgent
 
 app = Flask(__name__)
 game = BlackjackGame()
 simulation = None
-agent = RLAgent()
+agent = DQNAgent(state_size=6, action_size=2)
 
 @app.route('/')
 def home():
@@ -45,15 +45,20 @@ def simulate():
             'message': "Initial deal"
         }]
 
-        state = agent.get_state_key(
+        state = agent.get_state(
             simulation.calculate_score(simulation.player_hand),
-            simulation.dealer_hand[0].rank
+            simulation.ace_in_hand(simulation.player_hand),
+            simulation.dealer_hand[0].rank,
+            simulation.high_cards,
+            simulation.low_cards,
+            simulation.aces,
+            len(simulation.deck)
         )
 
         while not simulation.game_over:
-            action = agent.choose_action(state)
+            action = agent.act(state)
 
-            if action == 'hit':
+            if action == 0:
                 message = simulation.player_hit()
             else:
                 message = simulation.dealer_turn()
@@ -75,13 +80,22 @@ def simulate():
             })
 
             if not simulation.game_over:
-                next_state = agent.get_state_key(
+                next_state = agent.get_state(
                     simulation.calculate_score(simulation.player_hand),
-                    simulation.dealer_hand[0].rank
+                    simulation.ace_in_hand(simulation.player_hand),
+                    simulation.dealer_hand[0].rank,
+                    simulation.high_cards,
+                    simulation.low_cards,
+                    simulation.aces,
+                    len(simulation.deck)
                 )
                 reward = agent.get_reward(simulation)
-                agent.update_q_value(state, action, reward, next_state)
+                agent.remember(state, action, reward, next_state, simulation.game_over)
                 state = next_state
+
+        reward = agent.get_reward(simulation)
+        if state is not None:
+            agent.remember(state, action, reward, None, simulation.game_over)
 
         all_steps.extend(steps)
 

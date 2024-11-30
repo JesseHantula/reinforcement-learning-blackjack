@@ -63,6 +63,9 @@ class BlackjackGame:
             score -= 10
             aces -= 1
         return score
+    
+    def ace_in_hand(self, hand):
+        return any(card.rank == 'Ace' for card in hand)
 
     def deal_player(self):
         for _ in range(2):
