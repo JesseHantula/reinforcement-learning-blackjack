@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blackjack Simulation</title>
     <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .container {
+        display: flex;
+        gap: 20px;
+      }
+      .left-column,
+      .right-column {
+        flex: 1;
+      }
+      .left-column {
+        border-right: 2px solid #ccc;
+        padding-right: 20px;
+      }
+      .right-column {
+        padding-left: 20px;
+      }
       .card {
         width: 100px;
         height: 140px;
@@ -16,46 +35,51 @@
       }
       .stats {
         margin-top: 20px;
-        display: none;
       }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
-    <h1>Blackjack Simulation</h1>
-    <div id="game-state">
-      <div id="player-hand">
-        <h2>Player (Agent) Hand:</h2>
+    <div class="container">
+      <div class="left-column">
+        <div id="game-state">
+          <div id="player-hand">
+            <h2>Player (Agent) Hand:</h2>
+          </div>
+          <p>Player (Agent) Score: <span id="player-score"></span></p>
+          <div id="dealer-hand">
+            <h2>Dealer Hand:</h2>
+          </div>
+          <p>Dealer Score: <span id="dealer-score"></span></p>
+          <p id="message"></p>
+          <p id="game-over"></p>
+        </div>
+        <button id="start-simulation">New Simulation</button>
+        <button id="continue-simulation" style="display: none">
+          Continue Simulation
+        </button>
+        <button id="10-simulations" style="display: none">
+          10 Simulation Steps
+        </button>
+        <button id="100-simulations" style="display: none">
+          100 Simulation Steps
+        </button>
       </div>
-      <p>Player (Agent) Score: <span id="player-score"></span></p>
-      <div id="dealer-hand">
-        <h2>Dealer Hand:</h2>
-      </div>
-      <p>Dealer Score: <span id="dealer-score"></span></p>
-      <p id="message"></p>
-      <p id="game-over"></p>
 
-      <div class="stats">
-        <p>Deck Size: <span id="deck-size"></span></p>
-        <p>High Cards (10, J, Q, K): <span id="high-cards"></span></p>
-        <p>Low Cards (2, 3, 4, 5): <span id="low-cards"></span></p>
-        <p>Aces: <span id="aces"></span></p>
-        <p>Simulation Count: <span id="simulation-count"></span></p>
-        <p>Bot Wins: <span id="bot-wins"></span></p>
-        <p>Dealer Wins: <span id="dealer-wins"></span></p>
-        <p>Draws: <span id="draws"></span></p>
+      <div class="right-column">
+        <div class="stats">
+          <h2>Statistics</h2>
+          <p>Deck Size: <span id="deck-size"></span></p>
+          <p>High Cards (10, J, Q, K): <span id="high-cards"></span></p>
+          <p>Low Cards (2, 3, 4, 5): <span id="low-cards"></span></p>
+          <p>Aces: <span id="aces"></span></p>
+          <p>Simulation Count: <span id="simulation-count"></span></p>
+          <p>Bot Wins: <span id="bot-wins"></span></p>
+          <p>Dealer Wins: <span id="dealer-wins"></span></p>
+          <p>Draws: <span id="draws"></span></p>
+        </div>
       </div>
     </div>
-    <button id="start-simulation">New Simulation</button>
-    <button id="continue-simulation" style="display: none">
-      Continue Simulation
-    </button>
-    <button id="10-simulations" style="display: none">
-      10 Simulation Steps
-    </button>
-    <button id="100-simulations" style="display: none">
-      100 Simulation Steps
-    </button>
 
     <script>
       function updateGameState(state) {
@@ -97,7 +121,6 @@
           $("#start-simulation").prop("disabled", false);
           $("#continue-simulation").show();
           $("#game-over").text("Game Over!");
-          $(".stats").show();
           $("#deck-size").text(state.deck_size);
           $("#high-cards").text(state.high_cards);
           $("#low-cards").text(state.low_cards);
@@ -108,7 +131,6 @@
           $("#draws").text(state.draws);
         } else {
           $("#game-over").text("");
-          $(".stats").hide();
         }
       }
 
